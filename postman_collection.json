@@ -1,0 +1,791 @@
+{
+  "info": {
+    "_postman_id": "mlaku-mlaku-api-collection",
+    "name": "Mlaku-Mlaku Backend API Test",
+    "description": "Complete API collection for testing all features including authentication, user management, employees, tourists, and trips management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Tourist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('tourist_token', response.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tourist@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Doe\",\n  \"phone\": \"+628123456789\",\n  \"gender\": \"MALE\",\n  \"age\": 25,\n  \"address\": \"123 Main Street, Jakarta\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new tourist account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('admin_token', response.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@mail.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login as admin user (created by seed)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('employee_token', response.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"employee@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login as employee (create employee first using admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Tourist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('tourist_token', response.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tourist@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login as tourist"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for login and registration"
+    },
+    {
+      "name": "Users Management (ADMIN)",
+      "item": [
+        {
+          "name": "Create Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('employee_user_id', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"employee@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Jane Smith\",\n  \"position\": \"Travel Coordinator\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/employee",
+              "host": ["{{base_url}}"],
+              "path": ["users", "employee"]
+            },
+            "description": "Create a new employee (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tourist (by Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('tourist_user_id', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tourist2@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Alice Johnson\",\n  \"phone\": \"+628987654321\",\n  \"gender\": \"FEMALE\",\n  \"age\": 30,\n  \"address\": \"456 Beach Road, Bali\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/tourist",
+              "host": ["{{base_url}}"],
+              "path": ["users", "tourist"]
+            },
+            "description": "Create a new tourist (ADMIN or EMPLOYEE)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{tourist_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{tourist_user_id}}"]
+            },
+            "description": "Update user information (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Credentials",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newemail@example.com\",\n  \"password\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{tourist_user_id}}/credentials",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{tourist_user_id}}", "credentials"]
+            },
+            "description": "Update user email and password (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{tourist_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{tourist_user_id}}"]
+            },
+            "description": "Delete a user (ADMIN only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "User management endpoints (ADMIN role required)"
+    },
+    {
+      "name": "Employees (ADMIN)",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees",
+              "host": ["{{base_url}}"],
+              "path": ["employees"]
+            },
+            "description": "Get all employees (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee by User ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees/{{employee_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["employees", "{{employee_user_id}}"]
+            },
+            "description": "Get employee details by user ID (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"position\": \"Senior Travel Coordinator\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/employees/{{employee_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["employees", "{{employee_user_id}}"]
+            },
+            "description": "Update employee information (ADMIN only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees/{{employee_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["employees", "{{employee_user_id}}"]
+            },
+            "description": "Delete an employee (ADMIN only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Employee management endpoints (ADMIN role required)"
+    },
+    {
+      "name": "Tourists (EMPLOYEE)",
+      "item": [
+        {
+          "name": "Get All Tourists",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tourists",
+              "host": ["{{base_url}}"],
+              "path": ["tourists"]
+            },
+            "description": "Get all tourists (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tourist by User ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tourists/{{tourist_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tourists", "{{tourist_user_id}}"]
+            },
+            "description": "Get tourist details by user ID (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tourist",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+628111222333\",\n  \"address\": \"789 New Address, Surabaya\",\n  \"age\": 26\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tourists/{{tourist_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tourists", "{{tourist_user_id}}"]
+            },
+            "description": "Update tourist information (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tourist",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tourists/{{tourist_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tourists", "{{tourist_user_id}}"]
+            },
+            "description": "Delete a tourist (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tourist (by Employee)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('new_tourist_id', response.tourist.id);",
+                  "    pm.environment.set('new_tourist_user_id', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tourist3@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Bob Williams\",\n  \"phone\": \"+628555666777\",\n  \"gender\": \"MALE\",\n  \"age\": 35,\n  \"address\": \"321 Mountain View, Bandung\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/tourist",
+              "host": ["{{base_url}}"],
+              "path": ["users", "tourist"]
+            },
+            "description": "Create a new tourist (EMPLOYEE can also do this)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Tourist management endpoints (EMPLOYEE role required)"
+    },
+    {
+      "name": "Trips",
+      "item": [
+        {
+          "name": "Create Trip (EMPLOYEE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('trip_id', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"touristId\": \"{{new_tourist_id}}\",\n  \"startDate\": \"2025-01-15T00:00:00.000Z\",\n  \"endDate\": \"2025-01-20T00:00:00.000Z\",\n  \"destination\": {\n    \"country\": \"Indonesia\",\n    \"city\": \"Bali\",\n    \"hotel\": \"Grand Hyatt Bali\",\n    \"activities\": [\"Beach\", \"Temple Tour\", \"Surfing\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trips",
+              "host": ["{{base_url}}"],
+              "path": ["trips"]
+            },
+            "description": "Create a new trip (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Trips (EMPLOYEE)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips",
+              "host": ["{{base_url}}"],
+              "path": ["trips"]
+            },
+            "description": "Get all trips (EMPLOYEE sees all, TOURIST sees only their own)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Trips (TOURIST)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tourist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips",
+              "host": ["{{base_url}}"],
+              "path": ["trips"]
+            },
+            "description": "Get trips for logged-in tourist (only their own trips)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trip by ID (EMPLOYEE)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips/{{trip_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["trips", "{{trip_id}}"]
+            },
+            "description": "Get trip details by ID (EMPLOYEE or TOURIST if it's their trip)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trip by ID (TOURIST)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tourist_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips/{{trip_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["trips", "{{trip_id}}"]
+            },
+            "description": "Get trip details (TOURIST can only view their own trips)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Trip (EMPLOYEE)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-01-16T00:00:00.000Z\",\n  \"endDate\": \"2025-01-22T00:00:00.000Z\",\n  \"destination\": {\n    \"country\": \"Indonesia\",\n    \"city\": \"Bali\",\n    \"hotel\": \"Four Seasons Resort Bali\",\n    \"activities\": [\"Beach\", \"Temple Tour\", \"Surfing\", \"Spa\"]\n  },\n  \"status\": \"ONGOING\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trips/{{trip_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["trips", "{{trip_id}}"]
+            },
+            "description": "Update trip information (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Trip (EMPLOYEE)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips/{{trip_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["trips", "{{trip_id}}", "cancel"]
+            },
+            "description": "Cancel a trip (EMPLOYEE only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Trip (EMPLOYEE)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trips/{{trip_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["trips", "{{trip_id}}"]
+            },
+            "description": "Delete a trip (EMPLOYEE only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Trip management endpoints (EMPLOYEE and TOURIST with different permissions)"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "employee_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "tourist_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "employee_user_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "tourist_user_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "new_tourist_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "new_tourist_user_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "trip_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    }
+  ]
+}
