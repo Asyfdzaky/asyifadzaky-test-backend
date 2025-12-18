@@ -43,7 +43,15 @@ export class UsersService {
         },
       });
 
-      return { message: 'Employee account created successfully' };
+      return {
+        message: 'Employee account created successfully',
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      };
     });
   }
 
@@ -78,7 +86,7 @@ export class UsersService {
         },
       });
 
-      return { message: 'Tourist account created successfully' };
+      return { message: 'Tourist account created successfully', data: dto };
     });
   }
 
