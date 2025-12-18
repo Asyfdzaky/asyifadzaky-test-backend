@@ -1,29 +1,31 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import serverless from 'serverless-http';
 import express from 'express';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 
-let server: any;
+let cachedServer: any;
 
-async function bootstrap() {
-  if (!server) {
+async function bootstrapServer() {
+  if (!cachedServer) {
     const expressApp = express();
+
     const app = await NestFactory.create(
       AppModule,
       new ExpressAdapter(expressApp),
+      { bufferLogs: true },
     );
 
     app.enableCors();
     await app.init();
 
-    server = serverless(expressApp);
+    cachedServer = expressApp;
   }
 
-  return server;
+  return cachedServer;
 }
 
-export default async function handler(req: any, res: any) {
-  const server = await bootstrap();
-  return server(req, res);
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const server = await bootstrapServer();
+  server(req, res);
 }
