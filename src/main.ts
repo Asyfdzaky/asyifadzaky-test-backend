@@ -1,31 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
-import { VercelRequest, VercelResponse } from '@vercel/node';
 
-let cachedServer: any;
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-async function bootstrapServer() {
-  if (!cachedServer) {
-    const expressApp = express();
+  app.enableCors();
 
-    const app = await NestFactory.create(
-      AppModule,
-      new ExpressAdapter(expressApp),
-      { bufferLogs: true },
-    );
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
 
-    app.enableCors();
-    await app.init();
-
-    cachedServer = expressApp;
-  }
-
-  return cachedServer;
+  console.log(`🚀 Server running on port ${port}`);
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const server = await bootstrapServer();
-  server(req, res);
-}
+bootstrap();
